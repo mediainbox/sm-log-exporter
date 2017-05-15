@@ -7,16 +7,22 @@ debug = require("debug")("sm-log-exporter");
 tz = require('timezone');
 
 module.exports = SessionPuller = (function() {
-  function SessionPuller(es, index_prefix, start, end) {
+  function SessionPuller(es, index_prefix, start, end, path) {
     this.es = es;
     this.index_prefix = index_prefix;
     this.start = start;
     this.end = end;
+    this.path = path;
     this._body = {
       query: {
         filtered: {
           query: {
-            match_all: {}
+            match: {
+              "client.path": {
+                "query": this.path,
+                "type": "phrase"
+              }
+            }
           },
           filter: {
             and: [
@@ -30,7 +36,8 @@ module.exports = SessionPuller = (function() {
                 range: {
                   time: {
                     gte: this.start,
-                    lt: this.end
+                    lt: this.end,
+                    format: "epoch_millis"
                   }
                 }
               }

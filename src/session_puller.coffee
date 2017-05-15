@@ -2,7 +2,7 @@ debug   = require("debug")("sm-log-exporter")
 tz      = require('timezone')
 
 module.exports = class SessionPuller
-    constructor: (@es,@index_prefix,@start,@end) ->
+    constructor: (@es,@index_prefix,@start,@end,@path) ->
 
         # -- Build our query body -- #
 
@@ -10,8 +10,8 @@ module.exports = class SessionPuller
             query:
                 filtered:
                     query:
-                        match_all:{}
-                    filter:
+                        match:{ "client.path": { "query": @path, "type": "phrase"} }
+                    filter: 
                         and: [
                             range:
                                 duration:
@@ -21,6 +21,7 @@ module.exports = class SessionPuller
                                 time:
                                     gte:@start
                                     lt:@end
+                                    format:"epoch_millis"
                         ]
             sort: [ time:"asc" ]
             size: 1000

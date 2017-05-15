@@ -6,8 +6,8 @@ module.exports = class W3CFormatter extends require("stream").Transform
         super objectMode:true
 
         # go ahead and write our header
-        @push "#Software: StreamMachine w3c Exporter\n"
-        @push "#Version: 0.1.0\n"
+        @push "#Software: MediaInbox w3c Exporter\n"
+        @push "#Version: 0.2.0\n"
         @push "#Fields: c-ip date time cs-uri-stem c-status cs(User-Agent) sc-bytes x-duration\n"
 
     _transform: (session,encoding,cb) ->

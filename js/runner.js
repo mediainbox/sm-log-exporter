@@ -1,4 +1,4 @@
-var ES, FORMATTERS, SessionPuller, SoundExFormatter, UserAgentFormatter, W3CFormatter, argv, debug, end_date, es, format, formatter, puller, start_date, tz, zone;
+var ES, FORMATTERS, SessionPuller, SoundExFormatter, UserAgentFormatter, W3CFormatter, argv, debug, end_date, es, format, formatter, path, puller, start_date, tz, zone;
 
 debug = require("debug")("sm-log-exporter");
 
@@ -35,6 +35,10 @@ argv = require("yargs").options({
     describe: "End Date",
     demand: true,
     requiresArg: true
+  },
+  path: {
+    describe: "Path name to filter only one radio",
+    "default": null
   },
   zone: {
     describe: "Timezone for dates",
@@ -79,9 +83,11 @@ start_date = zone(argv.start, argv.zone);
 
 end_date = zone(argv.end, argv.zone);
 
+path = argv.path;
+
 console.error("Stats: " + start_date + " - " + end_date);
 
-puller = new SessionPuller(es, argv.index, start_date, end_date);
+puller = new SessionPuller(es, argv.index, start_date, end_date, path);
 
 format = new formatter(argv.min_duration, argv.max_duration);
 

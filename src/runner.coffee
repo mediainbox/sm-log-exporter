@@ -27,6 +27,9 @@ argv = require("yargs")
             describe:       "End Date"
             demand:         true
             requiresArg:    true
+        path:
+            describe:       "Path name to filter only one radio"
+            default:        null
         zone:
             describe:       "Timezone for dates"
             default:        "UTC"
@@ -60,11 +63,13 @@ es = new ES.Client host:argv.server
 start_date  = zone(argv.start,argv.zone)
 end_date    = zone(argv.end,argv.zone)
 
+path        = argv.path
+
 console.error "Stats: #{ start_date } - #{ end_date }"
 
 # -- Start pulling logs -- #
 
-puller  = new SessionPuller es, argv.index, start_date, end_date
+puller  = new SessionPuller es, argv.index, start_date, end_date, path
 format  = new formatter argv.min_duration, argv.max_duration
 
 puller.stream.pipe(format).pipe(process.stdout)
